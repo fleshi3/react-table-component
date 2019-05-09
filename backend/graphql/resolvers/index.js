@@ -1,7 +1,8 @@
-// Author Schema
+// Schemas
 const Author = require('../../models/author');
 const Book = require('../../models/book');
 const Genre = require('../../models/genre');
+const BookInstance = require('../../models/bookinstance');
 
 const resolvers = {
   Query: {
@@ -53,6 +54,22 @@ const resolvers = {
           });
       });
     },
+    bookInstance: args => {
+      return new Promise((resolve, reject) => {
+        BookInstance.find({_id: args.id}).exec((err, res) => {
+          err ? reject(err) : resolve(res);
+        });
+      });
+    },
+    bookInstances: () => {
+      return new Promise((resolve, reject) => {
+        BookInstance.find({})
+          .populate()
+          .exec((err, res) => {
+            err ? reject(err) : resolve(res);
+          });
+      });
+    },
   },
   Book: {
     author: parent => {
@@ -65,6 +82,15 @@ const resolvers = {
     genre: parent => {
       return new Promise((resolve, reject) => {
         Genre.findOne(parent.genre).exec((err, res) => {
+          err ? reject(err) : resolve(res);
+        });
+      });
+    },
+  },
+  BookInstance: {
+    book: parent => {
+      return new Promise((resolve, reject) => {
+        Book.findOne(parent.book).exec((err, res) => {
           err ? reject(err) : resolve(res);
         });
       });
